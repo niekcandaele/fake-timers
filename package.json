@@ -16,9 +16,12 @@
   "scripts": {
     "lint": "eslint .",
     "test-node": "mocha --timeout 200 test/ integration-test/ -R dot --check-leaks",
-    "test-headless": "mochify --no-detect-globals --timeout=10000",
+    "test-headless": "mochify --driver puppeteer",
     "test-check-coverage": "npm run test-coverage && nyc check-coverage",
-    "test-cloud": "mochify --wd --no-detect-globals --timeout=10000",
+    "test-cloud": "npm run test-edge && npm run test-firefox && npm run test-safari",
+    "test-edge": "BROWSER_NAME=MicrosoftEdge mochify --config mochify.webdriver.js",
+    "test-firefox": "BROWSER_NAME=firefox mochify --config mochify.webdriver.js",
+    "test-safari": "BROWSER_NAME=safari mochify --config mochify.webdriver.js",
     "test-coverage": "nyc --all --reporter text --reporter html --reporter lcovonly npm run test-node",
     "test": "npm run test-node && npm run test-headless",
     "prettier:check": "prettier --check '**/*.{js,css,md}'",
@@ -31,19 +34,28 @@
     "*.{js,css,md}": "prettier --check",
     "*.js": "eslint"
   },
+  "mochify": {
+    "reporter": "dot",
+    "timeout": 10000,
+    "bundle": "browserify --no-detect-globals",
+    "spec": "test/**/*-test.js"
+  },
   "files": [
     "src/"
   ],
   "devDependencies": {
+    "@mochify/cli": "^0.1.2",
+    "@mochify/driver-puppeteer": "^0.2.2",
+    "@mochify/driver-webdriver": "^0.1.2",
     "@sinonjs/eslint-config": "4.0.2",
     "@sinonjs/referee-sinon": "6.0.1",
+    "browserify": "17.0.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "3.4.1",
     "husky": "4.2.1",
     "jsdom": "16.5.2",
     "lint-staged": "10.0.7",
-    "mocha": "8.3.2",
-    "mochify": "7.0.0",
+    "mocha": "9.1.1",
     "nyc": "14.1.1",
     "prettier": "2.2.1"
   },
